@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewBag.Title = "Booking Form";
+    var service = ViewBag.Service as string ?? "Unknown Service"; <!--Shows different services for different pages-->
+}
+
+<h2>BookingForm</h2>
+
+<!--Add styling for form-->
+<style>
+    label {
+        font-weight: bold;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="container mt-5 form-section">
+    <h1>Booking for: @service</h1> <!--service should be in context -->
+    <!--form-->
+    <form id="bookingForm">
+        <!--Full Name-->
+        <div class="form-group mt-3">
+            <label for="name">Full Name*</label>
+            <input type="text" class="form-control" id="name" placeholder="John Carter" required />
+        </div>
+        <!--Phone-->
+        <div class="form-group mt-3">
+            <label for="phone">Phone*</label>
+            <input type="tel" class="form-control" id="phone" placeholder="072 123 4567" required />
+        </div>
+        <!--Pick-up Time-->
+        <div class="form-group mt-3">
+            <label for="pick-upTime">Pick-up Time*</label>
+            <input type="datetime-local" class="form-control" id="pick-upTime" required />
+        </div>
+        <!--Reason-->
+        <div class="form-group mt-3">
+            <label for="reason">Reason*</label>
+            <select class="form-control" id="reason" required>
+                <option disabled selected value="">-- Select a Reason --</option>
+                <!-- These options will be inserted by JS--Add code -->
+            </select>
+        </div>
+        <!--Vehicle-->
+        <div class="form-group mt-3">
+            <label for="vehicle">Vehicle*</label>
+            <select class="form-control" id="vehicle" required>
+                <option disabled selected value="">-- Select a Vehicle --</option>
+                <!-- These options will be inserted by JS--Add code -->
+            </select>
+        </div>
+        <!--Driver-->
+        <div class="form-group mt-3">
+            <label for="driver">Driver*</label>
+            <select class="form-control" id="driver" required>
+                <option disabled selected value="">-- Select a Driver --</option>
+                <!-- These options will be inserted by JS--Add code -->
+            </select>
+        </div>
+        <!--Pick-up address-->
+        <div class="form-group mt-3">
+            <label for="address">Pick-up Address</label>
+            <textarea class="form-control" id="address" rows="4" placeholder="Please type your address here..."></textarea>
+
+            <!--Submit button-->
+            <button type="submit" class="btn btn-success mt-4">BOOK AMBULANCE</button>
+        </div>
+    </form>
+</div>
+
+<script>
+        const service = "@service"; //for different forms
+
+        function populateDropdowns() {
+            const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+
+            const driverSelect = document.getElementById("driver");
+            const vehicleSelect = document.getElementById("vehicle");
+
+            // Filter and add driver options
+            drivers.filter(d => d.service === service).forEach(driver => {
+                const opt = document.createElement("option");
+                opt.value = JSON.stringify(driver);
+                opt.textContent = driver.name + " (" + driver.service + ")";
+                driverSelect.appendChild(opt);
+            });
+
+            // Filter and add vehicle options
+            vehicles.filter(v => v.service === service).forEach(vehicle => {
+                const opt = document.createElement("option");
+                opt.value = JSON.stringify(vehicle);
+                opt.textContent = vehicle.model + " (" + vehicle.service + ")";
+                vehicleSelect.appendChild(opt);
+            });
+
+            const reasons = [
+                "Injury Emergency",
+                "Medical Checkup",
+                "Surgery Transport",
+                "Patient Transfer",
+                "Event Standby",
+                "Chronic Condition"
+            ];
+
+            const reasonSelect = document.getElementById("reason");
+            reasons.forEach(reason => {
+                const opt = document.createElement("option");
+                opt.value = reason;
+                opt.textContent = reason;
+                reasonSelect.appendChild(opt);
+            });
+
+
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            populateDropdowns();
+
+            document.getElementById("bookingForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const booking = {
+                    id: crypto.randomUUID(),
+                    date: new Date().toLocaleString(),
+                    type: service,
+                    isSOS: false,
+                    name: document.getElementById("name").value,
+                    phone: document.getElementById("phone").value,
+                    pickup: document.getElementById("address").value,
+                    time: document.getElementById("pick-upTime").value,
+                    driver: JSON.parse(document.getElementById("driver").value),
+                    vehicle: JSON.parse(document.getElementById("vehicle").value),
+                    reason: document.getElementById("reason").value
+                };
+
+
+                let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+                bookings.push(booking);
+
+                localStorage.setItem("bookings", JSON.stringify(bookings));
+                localStorage.setItem("latestBooking", JSON.stringify(booking));
+
+                window.location.href = '@Url.Action("BookingConfirmed", "Home")';
+            });
+        });
+</script>

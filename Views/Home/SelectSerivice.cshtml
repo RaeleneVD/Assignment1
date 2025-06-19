@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "SelectSerivice";
+}
+
+<!--Need to add Css styling-->
+<style>
+    #SelectAService {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .service-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 15px 0;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        height: 100%;
+    }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+    .service-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        color: #2c3e50;
+    }
+</style>
+
+<div id="SelectAService" class="container">
+    <h2>Select a Service</h2>
+    <p>Select a service below to make a specific booking.</p>
+
+    <div class="row" id="SelectAServiceCards">
+        <!--When user clicks on card, take to formbooking for each section-->
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Advanced Life Support')">
+                <img src="~/Content/Images/als.jpg" alt="Advanced Life Support" class="service-img" />  <!--Add image-->
+                <h3>ALS (Advanced Life Support)</h3>
+                <p>Staffed by a paramedic, ALS ambulances transport patients requiring high-level care.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Basic Life Support')">
+                <img src="~/Content/Images/bls.jpg" alt="Basic Life Support" class="service-img" /> <!--Add image-->
+                <h3>BLS (Basic Life Support)</h3>
+                <p>Used to transport stable, non-critical patients.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Patient Support')">
+                <img src="~/Content/Images/patient.jpg" alt="Patient Transport" class="service-img" /> <!--Add image-->
+                <h3>Patient Transport</h3>
+                <p>For patients who need basic transport assistance to/from hospital.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Medical Utility Vehicle')">
+                <img src="~/Content/Images/utility.jpg" alt="Medical Utility" class="service-img" /> <!--Add image-->
+                <h3>Medical Utility Vehicle</h3>
+                <p>Equipped for transporting and supporting patients comfortably.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Event Medical Ambulance')">
+                <img src="~/Content/Images/event.jpg" alt="Event Ambulance" class="service-img" /> <!--Add image-->
+                <h3>Event Medical Ambulance</h3>
+                <p>For events like concerts and festivals with standby medical support.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="service-card" onclick="goToBookingForm('Air Ambulance')">
+                <img src="~/Content/Images/air.jpg" alt="Air Ambulance" class="service-img" /> <!--Add image-->
+                <h3>Air Ambulance</h3>
+                <p>Used for transferring patients across long distances or emergencies.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+        function goToBookingForm(service) {
+            location.href = '@Url.Action("BookingForm", "Home")' + '?service=' + encodeURIComponent(service);
+        }
+</script>

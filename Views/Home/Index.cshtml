@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<!--Need to add more styling--> <!--Basics styling done-->
+<style>
+    #title {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .row > div {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+</style>
+
+<main class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 id="title">Welcome To RescueBus</h1>
+        </div>
+    </div>
+
+    <div class="row text-center">
+        <div class="col-md-4" >
+            <h1>A real O.K. team here to try and save you</h1>
+            <p>If you are still breathing once you've reached the hospital, we've done our job successfully!</p>
+            <button onclick="location.href='@Url.Action("SelectService", "Home")'" class="btn btn-primary btn-lg m-2">Book Ambulance</button>
+        </div>
+
+        <div class="col-md-4">
+            <h1>Emergency?</h1>
+            <p>Only hit the button for real emergencies, mind you...</p>
+            <p>Stepping on a thumbtack at 3am while doing arts and crafts is not an emergency.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h1>S.O.S.</h1>
+            <p>Click the SOS button to create an emergency booking.</p>
+            <button onclick="createSOSBooking()" class="btn btn-danger btn-lg m-2">S.O.S.</button> <!--Create function that will fill oit the form. Take to booking confirmed-->
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        //Add createSOSBooking function here
+
+        function createSOSBooking() {
+            let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+
+            if (drivers.length === 0 || vehicles.length === 0) {
+                alert("Please add drivers and vehicles in the Manage section first.");
+                return;
+            }
+
+            let driver = drivers[Math.floor(Math.random() * drivers.length)];
+            let vehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+
+            let booking = {
+                id: crypto.randomUUID(),
+                date: new Date().toLocaleString(),
+                type: "S.O.S.",
+                isSOS: true,
+                driver: driver,
+                vehicle: vehicle
+            };
+
+            let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+            bookings.push(booking);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+            localStorage.setItem("latestBooking", JSON.stringify(booking));
+
+            location.href = '@Url.Action("BookingConfirmed", "Home")';
+        }
+    </script>
+}
