@@ -131,15 +131,14 @@
             drivers.forEach((d, i) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-                <td><img src="/Content/Images/${d.image}" alt="Driver" class="table-img" /></td>
-                <td>${d.name}</td>
-                    <td>${d.service}</td>
-                    
-                    <td>
-                        <button class="btn btn-sm btn-secondary me-2" onclick="editDriver(${i})">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteDriver(${i})">Delete</button>
-                    </td>
-                `;
+                        <td>${d.name}</td>
+                        <td>${d.service}</td>
+                        <td><img src="/Content/Images/${d.image}" alt="Driver" class="table-img" /></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary me-2" onclick="editDriver(${i})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteDriver(${i})">Delete</button>
+                        </td>
+                    `;
             });
         }
 
@@ -149,7 +148,6 @@
 
             document.getElementById("driverName").value = d.name;
             document.getElementById("driverService").value = d.service;
-            document.getElementById("driverImage").value = d.image || "";
             document.getElementById("driverIndex").value = index;
             document.querySelector("#driverForm button[type='submit']").textContent = "Update Driver";
         }
@@ -170,7 +168,7 @@
                 id: index >= 0 && drivers[index] ? drivers[index].id : crypto.randomUUID(),
                 name: document.getElementById("driverName").value,
                 service: document.getElementById("driverService").value,
-                image: document.getElementById("driverImage").value
+                image: getRandomImageDriver(document.getElementById("driverService").value)//get driver image
             };
 
             if (index >= 0) {
@@ -196,17 +194,14 @@
             vehicles.forEach((v, i) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-
-                 <td><img src="/Content/Images/${v.image}" alt="Vehicle" class="table-img" /></td>
-                <td>${v.model}</td>
-                    <td>${v.service}</td>
-      
-                   
-                    <td>
-                        <button class="btn btn-sm btn-secondary me-2" onclick="editVehicle(${i})">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteVehicle(${i})">Delete</button>
-                    </td>
-                `;
+                        <td>${v.model}</td>
+                        <td>${v.service}</td>
+                        <td><img src="/Content/Images/${v.image}" alt="Vehicle" class="table-img" /></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary me-2" onclick="editVehicle(${i})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteVehicle(${i})">Delete</button>
+                        </td>
+                    `;
             });
         }
 
@@ -216,7 +211,6 @@
 
             document.getElementById("vehicleModel").value = v.model;
             document.getElementById("vehicleService").value = v.service;
-            document.getElementById("vehicleImage").value = v.image || "";
             document.getElementById("vehicleIndex").value = index;
             document.querySelector("#vehicleForm button[type='submit']").textContent = "Update Vehicle";
         }
@@ -237,7 +231,7 @@
                 id: index >= 0 && vehicles[index] ? vehicles[index].id : crypto.randomUUID(),
                 model: document.getElementById("vehicleModel").value,
                 service: document.getElementById("vehicleService").value,
-                image: document.getElementById("vehicleImage").value
+                image: getRandomImageVehicle(document.getElementById("vehicleService").value)//vehicle picture
             };
 
             if (index >= 0) {
@@ -257,5 +251,39 @@
             loadDrivers();
             loadVehicles();
         });
+
+        //images
+        function getRandomImageVehicle(service) {
+            const pools = {
+                "Air Ambulance": ["heli.jpg", "heli1.jpg"],
+                "Basic Life Support": ["van1.jpg", "van.jpg"],
+                "Advanced Life Support": ["heli.jpg", "heli1.jpg", "van1.jpg", "van.jpg"],
+                "Event Medical Ambulance": ["heli.jpg", "heli1.jpg", "van1.jpg", "van.jpg"],
+                "Medical Utility Vehicle": ["heli.jpg", "heli1.jpg", "van1.jpg", "van.jpg"],
+                "Patient Support": ["heli.jpg", "heli1.jpg", "van1.jpg", "van.jpg"]
+            };
+
+            const pool = pools[service] || ["default_vehicle.jpg"];
+            const randomIndex = Math.floor(Math.random() * pool.length);
+            return pool[randomIndex];
+        }
+
+
+
+        function getRandomImageDriver(service) {
+            const pools = {
+                "Air Ambulance": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                "Basic Life Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                "Advanced Life Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                "Event Medical Ambulance": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                    "Medical Utility Vehicle": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                "Patient Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"]
+            };
+
+            const pool = pools[service] || ["generic_driver.jpg"];
+            const randomIndex = Math.floor(Math.random() * pool.length);
+            return pool[randomIndex];
+        }
+
     </script>
 }
