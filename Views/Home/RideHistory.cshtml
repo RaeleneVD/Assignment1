@@ -63,7 +63,7 @@
                     <p><strong>Date:</strong> ${b.date}</p>
                     <small>Click to view details</small>
                 `;
-                div.onclick = function () {  //get from local storage
+                div.onclick = function () {  
                     localStorage.setItem("latestBooking", JSON.stringify(b));  
                     window.location.href = '@Url.Action("BookingConfirmed", "Home")';
                 };
