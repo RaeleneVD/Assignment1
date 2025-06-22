@@ -13,7 +13,7 @@ namespace Assignment1.Controllers
             return View();
         }
 
-        public ActionResult SelectSerivice()
+        public ActionResult SelectService()
         {
             ViewBag.Message = "Select Service page.";
 

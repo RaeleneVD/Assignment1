@@ -140,12 +140,14 @@
                     reason: document.getElementById("reason").value
                 };
 
-
+                //Save in local storage
                 let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
                 bookings.push(booking);
 
                 localStorage.setItem("bookings", JSON.stringify(bookings));
                 localStorage.setItem("latestBooking", JSON.stringify(booking));
+
+                console.log("Saved local storage") //delete
 
                 window.location.href = '@Url.Action("BookingConfirmed", "Home")';
             });

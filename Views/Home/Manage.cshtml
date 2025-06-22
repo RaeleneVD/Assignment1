@@ -1,7 +1,261 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Manage";
 }
 
-<h2>Manage</h2>
+<style>
+    .section {
+        margin-bottom: 50px;
+    }
 
+        .section h3 {
+            margin-bottom: 20px;
+        }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f9fa;
+    }
+
+    .form-inline .form-control {
+        display: inline-block;
+        width: auto;
+        margin-right: 10px;
+    }
+
+    .form-inline .btn {
+        vertical-align: middle;
+    }
+
+    .table-img {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Drivers and Vehicles</h2>
+
+    <!-- Drivers Section -->
+    <div class="section">
+        <h3>Drivers</h3>
+
+        <!-- Driver Form -->
+        <form id="driverForm" class="form-inline mb-3">
+            <input type="hidden" id="driverIndex" value="-1" />
+            <input type="text" class="form-control" id="driverName" placeholder="Driver Name" required />
+            <select class="form-control" id="driverService" required>
+                <option disabled selected value="">Service</option>
+                <option>Basic Life Support</option>
+                <option>Advanced Life Support</option>
+                <option>Air Ambulance</option>
+                <option>Event Medical Ambulance</option>
+                <option>Medical Utility Vehicle</option>
+                <option>Patient Support</option>
+            </select>
+            <!--<input type="text" class="form-control" id="driverImage" placeholder="Image filename" />-->
+            <button type="submit" class="btn btn-primary">Add Driver</button>
+        </form>
+
+        <!-- Driver Table -->
+        <table id="driverTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Service</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!--Vehicles Section -->
+    <div class="section">
+        <h3>Vehicles</h3>
+
+        <!-- Vehicle Form -->
+        <form id="vehicleForm" class="form-inline mb-3">
+            <input type="hidden" id="vehicleIndex" value="-1" />
+            <input type="text" class="form-control" id="vehicleModel" placeholder="Vehicle Model" required />
+            <select class="form-control" id="vehicleService" required>
+                <option disabled selected value="">Service</option>
+                <option>Basic Life Support</option>
+                <option>Advanced Life Support</option>
+                <option>Air Ambulance</option>
+                <option>Event Medical Ambulance</option>
+                <option>Medical Utility Vehicle</option>
+                <option>Patient Support</option>
+            </select>
+            <!--<input type="text" class="form-control" id="vehicleImage" placeholder="Image filename" />-->
+            <button type="submit" class="btn btn-success">Add Vehicle</button>
+
+        </form>
+
+        <!-- Vehicle Table -->
+        <table id="vehicleTable">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Service</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // === Drivers ===
+        function loadDrivers() {
+            const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            const tableBody = document.querySelector("#driverTable tbody");
+            tableBody.innerHTML = "";
+
+            //add images
+            drivers.forEach((d, i) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                <td><img src="/Content/Images/${d.image}" alt="Driver" class="table-img" /></td>
+                <td>${d.name}</td>
+                    <td>${d.service}</td>
+                    
+                    <td>
+                        <button class="btn btn-sm btn-secondary me-2" onclick="editDriver(${i})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteDriver(${i})">Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function editDriver(index) {
+            const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            const d = drivers[index];
+
+            document.getElementById("driverName").value = d.name;
+            document.getElementById("driverService").value = d.service;
+            document.getElementById("driverImage").value = d.image || "";
+            document.getElementById("driverIndex").value = index;
+            document.querySelector("#driverForm button[type='submit']").textContent = "Update Driver";
+        }
+
+        function deleteDriver(index) {
+            let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            drivers.splice(index, 1);
+            localStorage.setItem("drivers", JSON.stringify(drivers));
+            loadDrivers();
+        }
+
+        document.getElementById("driverForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+            const index = parseInt(document.getElementById("driverIndex").value);
+
+            const newDriver = {
+                id: index >= 0 && drivers[index] ? drivers[index].id : crypto.randomUUID(),
+                name: document.getElementById("driverName").value,
+                service: document.getElementById("driverService").value,
+                image: document.getElementById("driverImage").value
+            };
+
+            if (index >= 0) {
+                drivers[index] = newDriver;
+            } else {
+                drivers.push(newDriver);
+            }
+
+            localStorage.setItem("drivers", JSON.stringify(drivers));
+            this.reset();
+            document.getElementById("driverIndex").value = -1;
+            document.querySelector("#driverForm button[type='submit']").textContent = "Add Driver";
+            loadDrivers();
+        });
+
+        // === Vehicles ===
+        function loadVehicles() {
+            const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+            const tableBody = document.querySelector("#vehicleTable tbody");
+            tableBody.innerHTML = "";
+
+            //add image here
+            vehicles.forEach((v, i) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+
+                 <td><img src="/Content/Images/${v.image}" alt="Vehicle" class="table-img" /></td>
+                <td>${v.model}</td>
+                    <td>${v.service}</td>
+      
+                   
+                    <td>
+                        <button class="btn btn-sm btn-secondary me-2" onclick="editVehicle(${i})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteVehicle(${i})">Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function editVehicle(index) {
+            const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+            const v = vehicles[index];
+
+            document.getElementById("vehicleModel").value = v.model;
+            document.getElementById("vehicleService").value = v.service;
+            document.getElementById("vehicleImage").value = v.image || "";
+            document.getElementById("vehicleIndex").value = index;
+            document.querySelector("#vehicleForm button[type='submit']").textContent = "Update Vehicle";
+        }
+
+        function deleteVehicle(index) {
+            let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+            vehicles.splice(index, 1);
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+            loadVehicles();
+        }
+
+        document.getElementById("vehicleForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+            const index = parseInt(document.getElementById("vehicleIndex").value);
+
+            const newVehicle = {
+                id: index >= 0 && vehicles[index] ? vehicles[index].id : crypto.randomUUID(),
+                model: document.getElementById("vehicleModel").value,
+                service: document.getElementById("vehicleService").value,
+                image: document.getElementById("vehicleImage").value
+            };
+
+            if (index >= 0) {
+                vehicles[index] = newVehicle;
+            } else {
+                vehicles.push(newVehicle);
+            }
+
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+            this.reset();
+            document.getElementById("vehicleIndex").value = -1;
+            document.querySelector("#vehicleForm button[type='submit']").textContent = "Add Vehicle";
+            loadVehicles();
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadDrivers();
+            loadVehicles();
+        });
+    </script>
+}

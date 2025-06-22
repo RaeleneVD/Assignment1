@@ -1,7 +1,74 @@
-﻿
-@{
-    ViewBag.Title = "RideHistory";
+﻿@{
+    ViewBag.Title = "Ride History";
 }
 
-<h2>RideHistory</h2>
+<style>
+    .booking-card {
+        background-color: #f9f9f9;
+        border-left: 6px solid #2ecc71;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
 
+        .booking-card:hover {
+            background-color: #f0f0f0;
+        }
+
+    .sos {
+        border-left-color: red;
+        background-color: #fff0f0;
+    }
+
+    .booking-card h5 {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .booking-card small {
+        color: #555;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2>Your Ride History</h2>
+    <div id="historyList" class="mt-4"> <!--Add with js--></div>
+</div>
+
+@section Scripts {
+    <script>
+        //get fro local storage
+        const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+        function loadHistory() {
+            const container = document.getElementById("historyList");
+            container.innerHTML = "";
+
+            //if none
+            if (bookings.length === 0) {
+                container.innerHTML = "<p>No bookings found.</p>";
+                return;
+            }
+            
+            bookings.reverse().forEach((b, index) => {
+                const div = document.createElement("div");
+                div.className = "booking-card " + (b.isSOS ? "sos" : "");
+                div.innerHTML = `
+                    <h5>${b.type} - ${b.name || "Anonymous"}</h5>
+                    <p><strong>Pickup:</strong> ${b.pickup || "N/A"}</p>
+                    <p><strong>Date:</strong> ${b.date}</p>
+                    <small>Click to view details</small>
+                `;
+                div.onclick = function () {
+                    localStorage.setItem("latestBooking", JSON.stringify(b));
+                    window.location.href = '@Url.Action("BookingConfirmed", "Home")';
+                };
+                container.appendChild(div);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadHistory);
+    </script>
+}

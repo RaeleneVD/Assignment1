@@ -82,10 +82,13 @@
                 vehicle: vehicle
             };
 
+            //Save in local storage
             let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
             bookings.push(booking);
             localStorage.setItem("bookings", JSON.stringify(bookings));
             localStorage.setItem("latestBooking", JSON.stringify(booking));
+
+            console.log("Saved in local storage") //delete
 
             location.href = '@Url.Action("BookingConfirmed", "Home")';
         }
