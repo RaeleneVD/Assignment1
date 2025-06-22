@@ -2,7 +2,7 @@
     ViewBag.Title = "Home";
 }
 
-<!--Need to add more styling--> <!--Basics styling done-->
+<!--Basics styling done-->
 <style>
     #title {
         text-align: center;
@@ -32,13 +32,13 @@
 <main class="container">
     <div class="row">
         <div class="col-12">
-            <h1 id="title">Welcome To RescueBus 🚑🚑🚑</h1>
+            <h1 id="title">Welcome To RescueBus 🚑🚑🚑</h1>  <!--Windows and . for smileys-->
         </div>
     </div>
 
     <div class="row text-center">
         <div class="col-md-4">
-            
+            <!--empty-->
         </div>
 
         <div class="col-md-4">
@@ -48,16 +48,16 @@
         </div>
 
         <div class="col-md-4">
-          
+            <!--empty-->
         </div>
         <div class="col-md-4">
             <h1>A real O.K. team here to try and save you</h1>
             <p>If you are still breathing once you've reached the hospital, we've done our job successfully!</p>
-            <button onclick="location.href='@Url.Action("SelectService", "Home")'" class="btn btn-primary btn-lg m-2">Book Ambulance</button>
+            <button onclick="location.href='@Url.Action("SelectService", "Home")'" class="btn btn-primary btn-lg m-2">BOOK AMBULANCE</button>
         </div>
 
         <div class="col-md-4">
-           
+            <!--empty-->
         </div>
 
         <div class="col-md-4">
@@ -73,34 +73,37 @@
         //Add createSOSBooking function here
 
         function createSOSBooking() {
+            //Parse through local storage and find the drivers and vehicles that were added
             let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
 
+            //error checking -->No drivers or vehicles found in local storage
             if (drivers.length === 0 || vehicles.length === 0) {
                 alert("Please add drivers and vehicles in the Manage section first.");
                 return;
             }
 
+            //assign random driver and vehicle 
             let driver = drivers[Math.floor(Math.random() * drivers.length)];
             let vehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
 
+            //create booking object
             let booking = {
-                id: crypto.randomUUID(),
-                date: new Date().toLocaleString(),
+                id: crypto.randomUUID(),  //generate unique ID
+                date: new Date().toLocaleString(),  //gets current date and time
                 type: "S.O.S.",
                 isSOS: true,
                 driver: driver,
                 vehicle: vehicle
             };
 
-            //Save in local storage
+            //Save in local storage under bookings
             let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
             bookings.push(booking);
             localStorage.setItem("bookings", JSON.stringify(bookings));
             localStorage.setItem("latestBooking", JSON.stringify(booking));
 
-            console.log("Saved in local storage") //delete
-
+            //go straight to booking comfirmed page
             location.href = '@Url.Action("BookingConfirmed", "Home")';
         }
     </script>

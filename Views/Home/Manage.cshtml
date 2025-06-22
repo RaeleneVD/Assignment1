@@ -45,7 +45,7 @@
 </style>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Manage Drivers and Vehicles</h2>
+    <h2 class="mb-4">Driver and Vehicle Management</h2>
 
     <!-- Drivers Section -->
     <div class="section">
@@ -55,6 +55,7 @@
         <form id="driverForm" class="form-inline mb-3">
             <input type="hidden" id="driverIndex" value="-1" />
             <input type="text" class="form-control" id="driverName" placeholder="Driver Name" required />
+            <input type="text" class="form-control" id="driverPhone" placeholder="Phone Number" required />
             <select class="form-control" id="driverService" required>
                 <option disabled selected value="">Service</option>
                 <option>Basic Life Support</option>
@@ -72,9 +73,10 @@
         <table id="driverTable">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Service</th>
                     <th>Image</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Service</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -89,7 +91,8 @@
         <!-- Vehicle Form -->
         <form id="vehicleForm" class="form-inline mb-3">
             <input type="hidden" id="vehicleIndex" value="-1" />
-            <input type="text" class="form-control" id="vehicleModel" placeholder="Vehicle Model" required />
+            <input type="text" class="form-control" id="vehicleModel" placeholder="Vehicle Type" required />
+            <input type="text" class="form-control" id="vehicleRegistration" placeholder="Registration Number" required />
             <select class="form-control" id="vehicleService" required>
                 <option disabled selected value="">Service</option>
                 <option>Basic Life Support</option>
@@ -101,16 +104,16 @@
             </select>
             <!--<input type="text" class="form-control" id="vehicleImage" placeholder="Image filename" />-->
             <button type="submit" class="btn btn-success">Add Vehicle</button>
-
         </form>
 
         <!-- Vehicle Table -->
         <table id="vehicleTable">
             <thead>
                 <tr>
-                    <th>Model</th>
-                    <th>Service</th>
                     <th>Image</th>
+                    <th>Type</th>
+                    <th>Registration</th>
+                    <th>Service</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -121,37 +124,41 @@
 
 @section Scripts {
     <script>
-        // === Drivers ===
+        //Drivers ===============================================================================
+        //Get drivers from local storage
         function loadDrivers() {
             const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             const tableBody = document.querySelector("#driverTable tbody");
             tableBody.innerHTML = "";
 
-            //add images
+            //add a row with driver information
             drivers.forEach((d, i) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-                        <td>${d.name}</td>
-                        <td>${d.service}</td>
-                        <td><img src="/Content/Images/${d.image}" alt="Driver" class="table-img" /></td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary me-2" onclick="editDriver(${i})">Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteDriver(${i})">Delete</button>
-                        </td>
-                    `;
+                            <td><img src="/Content/Images/${d.image}" alt="Driver" class="table-img" /></td>
+                            <td>${d.name}</td>
+                            <td>${d.phone}</td>
+                            <td>${d.service}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary me-2" onclick="editDriver(${i})">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDriver(${i})">Delete</button>
+                            </td>
+                        `;
             });
         }
-
+        //edit
         function editDriver(index) {
             const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             const d = drivers[index];
 
             document.getElementById("driverName").value = d.name;
+            document.getElementById("driverPhone").value = d.phone;
             document.getElementById("driverService").value = d.service;
             document.getElementById("driverIndex").value = index;
             document.querySelector("#driverForm button[type='submit']").textContent = "Update Driver";
         }
 
+        //delete
         function deleteDriver(index) {
             let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             drivers.splice(index, 1);
@@ -159,14 +166,17 @@
             loadDrivers();
         }
 
+        //submit buuton
         document.getElementById("driverForm").addEventListener("submit", function (e) {
             e.preventDefault();
             let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             const index = parseInt(document.getElementById("driverIndex").value);
 
+            //create driver object
             const newDriver = {
-                id: index >= 0 && drivers[index] ? drivers[index].id : crypto.randomUUID(),
+                id: index >= 0 && drivers[index] ? drivers[index].id : crypto.randomUUID(), //random id generated
                 name: document.getElementById("driverName").value,
+                phone: document.getElementById("driverPhone").value,
                 service: document.getElementById("driverService").value,
                 image: getRandomImageDriver(document.getElementById("driverService").value)//get driver image
             };
@@ -184,37 +194,41 @@
             loadDrivers();
         });
 
-        // === Vehicles ===
+        //Vehicles =================================================================================
         function loadVehicles() {
             const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
             const tableBody = document.querySelector("#vehicleTable tbody");
             tableBody.innerHTML = "";
 
-            //add image here
+            //add row for vehicles
             vehicles.forEach((v, i) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-                        <td>${v.model}</td>
-                        <td>${v.service}</td>
-                        <td><img src="/Content/Images/${v.image}" alt="Vehicle" class="table-img" /></td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary me-2" onclick="editVehicle(${i})">Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteVehicle(${i})">Delete</button>
-                        </td>
-                    `;
+                            <td><img src="/Content/Images/${v.image}" alt="Vehicle" class="table-img" /></td>
+                            <td>${v.model}</td>
+                            <td>${v.registration}</td>
+                            <td>${v.service}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary me-2" onclick="editVehicle(${i})">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteVehicle(${i})">Delete</button>
+                            </td>
+                        `;
             });
         }
 
+        //edit
         function editVehicle(index) {
             const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
             const v = vehicles[index];
 
             document.getElementById("vehicleModel").value = v.model;
+            document.getElementById("vehicleRegistration").value = v.registration;
             document.getElementById("vehicleService").value = v.service;
             document.getElementById("vehicleIndex").value = index;
             document.querySelector("#vehicleForm button[type='submit']").textContent = "Update Vehicle";
         }
 
+        //delete
         function deleteVehicle(index) {
             let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
             vehicles.splice(index, 1);
@@ -222,14 +236,18 @@
             loadVehicles();
         }
 
+        //submit/create button
         document.getElementById("vehicleForm").addEventListener("submit", function (e) {
             e.preventDefault();
             let vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
             const index = parseInt(document.getElementById("vehicleIndex").value);
 
+
+            //create vehicle object
             const newVehicle = {
                 id: index >= 0 && vehicles[index] ? vehicles[index].id : crypto.randomUUID(),
                 model: document.getElementById("vehicleModel").value,
+                registration: document.getElementById("vehicleRegistration").value,
                 service: document.getElementById("vehicleService").value,
                 image: getRandomImageVehicle(document.getElementById("vehicleService").value)//vehicle picture
             };
@@ -253,6 +271,8 @@
         });
 
         //images
+
+        //get a random image depending on the type
         function getRandomImageVehicle(service) {
             const pools = {
                 "Air Ambulance": ["heli.jpg", "heli1.jpg"],
@@ -268,15 +288,13 @@
             return pool[randomIndex];
         }
 
-
-
         function getRandomImageDriver(service) {
             const pools = {
                 "Air Ambulance": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
                 "Basic Life Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
                 "Advanced Life Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
                 "Event Medical Ambulance": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
-                    "Medical Utility Vehicle": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
+                "Medical Utility Vehicle": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"],
                 "Patient Support": ["driverGirl.jpg", "driverGirl1.jpg", "driverGuy.jpg"]
             };
 
@@ -284,6 +302,5 @@
             const randomIndex = Math.floor(Math.random() * pool.length);
             return pool[randomIndex];
         }
-
     </script>
 }

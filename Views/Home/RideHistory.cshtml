@@ -33,8 +33,8 @@
 </style>
 
 <div class="container mt-5">
-    <h2>Your Ride History</h2>
-    <div id="historyList" class="mt-4"> <!--Add with js--></div>
+    <h2>Your Ride History 🕒</h2>
+    <div id="historyList" class="mt-4"> <!--Add with js and get from local storage--></div>
 </div>
 
 @section Scripts {
@@ -42,33 +42,35 @@
         //get fro local storage
         const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
 
+        //get history =====================================================================================
         function loadHistory() {
             const container = document.getElementById("historyList");
             container.innerHTML = "";
 
-            //if none
+            //error checking if none
             if (bookings.length === 0) {
                 container.innerHTML = "<p>No bookings found.</p>";
                 return;
             }
-            
-            bookings.reverse().forEach((b, index) => {
+
+            //most recent one first so reverse
+            bookings.reverse().forEach((b, index) => {      //for each booking we create a card 
                 const div = document.createElement("div");
-                div.className = "booking-card " + (b.isSOS ? "sos" : "");
+                div.className = "booking-card " + (b.isSOS ? "sos" : ""); //if sos highlight
                 div.innerHTML = `
-                    <h5>${b.type} - ${b.name || "Anonymous"}</h5>
+                    <h5>${b.type} - ${b.name || "Anonymous"}</h5>          
                     <p><strong>Pickup:</strong> ${b.pickup || "N/A"}</p>
                     <p><strong>Date:</strong> ${b.date}</p>
                     <small>Click to view details</small>
                 `;
-                div.onclick = function () {
-                    localStorage.setItem("latestBooking", JSON.stringify(b));
+                div.onclick = function () {  //get from local storage
+                    localStorage.setItem("latestBooking", JSON.stringify(b));  
                     window.location.href = '@Url.Action("BookingConfirmed", "Home")';
                 };
-                container.appendChild(div);
+                container.appendChild(div);  //add to html
             });
         }
 
-        document.addEventListener("DOMContentLoaded", loadHistory);
+        document.addEventListener("DOMContentLoaded", loadHistory); //load functions when page loads
     </script>
 }

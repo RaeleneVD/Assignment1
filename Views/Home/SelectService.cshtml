@@ -3,7 +3,7 @@
     ViewBag.Title = "SelectSerivice";
 }
 
-<!--Need to add Css styling-->
+<!--Basic Css styling done-->
 <style>
     #SelectAService {
         padding: 30px;
@@ -95,6 +95,7 @@
 
 
 <script>
+    //fuction takes user to the booking form and sends the type of form (the heading) --> didn't need to create a seperate form for each one
         function goToBookingForm(service) {
             location.href = '@Url.Action("BookingForm", "Home")' + '?service=' + encodeURIComponent(service);
         }

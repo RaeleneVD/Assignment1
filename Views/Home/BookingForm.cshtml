@@ -6,7 +6,7 @@
 
 <h2>BookingForm</h2>
 
-<!--Add styling for form-->
+<!--Add styling for form--> <!--Basic styling done-->
 <style>
     label {
         font-weight: bold;
@@ -22,6 +22,7 @@
 
 <div class="container mt-5 form-section">
     <h1>Booking for: @service</h1> <!--service should be in context -->
+    
     <!--form-->
     <form id="bookingForm">
         <!--Full Name-->
@@ -44,7 +45,7 @@
             <label for="reason">Reason*</label>
             <select class="form-control" id="reason" required>
                 <option disabled selected value="">-- Select a Reason --</option>
-                <!-- These options will be inserted by JS--Add code -->
+                <!-- These options will be inserted by JS -->
             </select>
         </div>
         <!--Vehicle-->
@@ -52,7 +53,7 @@
             <label for="vehicle">Vehicle*</label>
             <select class="form-control" id="vehicle" required>
                 <option disabled selected value="">-- Select a Vehicle --</option>
-                <!-- These options will be inserted by JS--Add code -->
+                <!-- These options will be inserted by JS from local storage depending on what vehicles there are -->
             </select>
         </div>
         <!--Driver-->
@@ -60,7 +61,7 @@
             <label for="driver">Driver*</label>
             <select class="form-control" id="driver" required>
                 <option disabled selected value="">-- Select a Driver --</option>
-                <!-- These options will be inserted by JS--Add code -->
+                <!-- These options will be inserted by JS from local storage depending on what drivers there are -->
             </select>
         </div>
         <!--Pick-up address-->
@@ -77,6 +78,7 @@
 <script>
         const service = "@service"; //for different forms
 
+        //Dropdown options come form local storage=================================================================
         function populateDropdowns() {
             const drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
             const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
@@ -100,6 +102,8 @@
                 vehicleSelect.appendChild(opt);
             });
 
+
+            //added with JS and not hard-coded for ability to edit and change
             const reasons = [
                 "Injury Emergency",
                 "Medical Checkup",
@@ -120,14 +124,17 @@
 
         }
 
+        //functions execute when page loads====================================================================
         document.addEventListener("DOMContentLoaded", () => {
             populateDropdowns();
 
+
+            //create a booking object when user clicks on the submit button
             document.getElementById("bookingForm").addEventListener("submit", function (e) {
                 e.preventDefault();
 
                 const booking = {
-                    id: crypto.randomUUID(),
+                    id: crypto.randomUUID(),  //unique id
                     date: new Date().toLocaleString(),
                     type: service,
                     isSOS: false,
@@ -145,10 +152,9 @@
                 bookings.push(booking);
 
                 localStorage.setItem("bookings", JSON.stringify(bookings));
-                localStorage.setItem("latestBooking", JSON.stringify(booking));
+                localStorage.setItem("latestBooking", JSON.stringify(booking)); //set the latest booking
 
-                console.log("Saved local storage") //delete
-
+                //redirected to booking confirmed page
                 window.location.href = '@Url.Action("BookingConfirmed", "Home")';
             });
         });

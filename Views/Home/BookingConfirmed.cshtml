@@ -2,10 +2,9 @@
     ViewBag.Title = "Booking Confirmed";
 }
 
-<!--Add images? where??-->
 
 <style>
-    /*Add stying*/
+    /*basic stying*/
     .confirmed-container {
         background-color: #f0f8ff;
         padding: 30px;
@@ -42,33 +41,38 @@
 </style>
 
 <div class="container confirmed-container" id="confirmationBox">
-    <h2>🚑 Booking Confirmed!</h2> <!--Windows and . for emojies-->
-    <div id="bookingDetails"> <!--The html needs to go here. DYnamic how? Stored in Local storage but how?--></div>
+    <h2>🚑 Booking Confirmed! 🚑</h2>
+    <div id="bookingDetails"> <!--Will be added dynamically with JS because we need to get the information from local storage--></div>
 </div>
 
 @section Scripts {
     <script>
-        //get latest from local storage
+        //get latest object from local storage
         const latest = JSON.parse(localStorage.getItem("latestBooking") || "null");// anything other than parse???
 
-        function showBooking() {  //has to show latest entry
+        //Display latest object ========================================================================================
+
+        function showBooking() {  
+            //error checking if there are no bookingobjects in local storage
             if (!latest) {
-                document.getElementById("bookingDetails").innerHTML = "<p>No booking found.</p>";  //if nothing
+                document.getElementById("bookingDetails").innerHTML = "<p>No booking found.</p>"; 
                 return;
             }
 
-            const isSOS = latest.isSOS;  //Lets make sos stand out
+            const isSOS = latest.isSOS;  //Display latest SOS booking
             const wrapper = document.getElementById("confirmationBox");
 
             if (isSOS) {
                 wrapper.classList.add("sos-booking");
             }
 
+            
+            //if nothing/sos ?? then N/A
             let html = `
                 <div class="booking-detail"><span class="label-bold">Booking ID:</span> ${latest.id}</div>
                 <div class="booking-detail"><span class="label-bold">Date:</span> ${latest.date}</div>
                 <div class="booking-detail"><span class="label-bold">Service Type:</span> ${latest.type}</div>
-                <div class="booking-detail"><span class="label-bold">Name:</span> ${latest.name ?? 'N/A'}</div>
+                <div class="booking-detail"><span class="label-bold">Name:</span> ${latest.name ?? 'N/A'}</div>  
                 <div class="booking-detail"><span class="label-bold">Phone:</span> ${latest.phone ?? 'N/A'}</div>
                 <div class="booking-detail"><span class="label-bold">Pickup Address:</span> ${latest.pickup ?? 'N/A'}</div>
                 <div class="booking-detail"><span class="label-bold">Pickup Time:</span> ${latest.time ?? 'N/A'}</div>
@@ -83,9 +87,9 @@
                 <div class="booking-detail"><span class="label-bold">Vehicle Model:</span> ${latest.vehicle?.model ?? 'N/A'}</div>
             `;
 
-            document.getElementById("bookingDetails").innerHTML = html;
+            document.getElementById("bookingDetails").innerHTML = html;  //display the html
         }
 
-        document.addEventListener("DOMContentLoaded", showBooking);
+        document.addEventListener("DOMContentLoaded", showBooking);  //when page loaded then function executed
     </script>
 }
